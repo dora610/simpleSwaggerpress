@@ -1,0 +1,278 @@
+openapi: 3.0.0
+info:
+  title: learn express and swagger - LCO
+  description: A segment for swagger tuts
+  version: 1.1.0
+  contact:
+    email: surajitkaruri@gmail.com
+    url: 'https://karurisuro.com'
+
+# servers:
+#   - url: https://localhost:5000/api/v1/
+#     description: for loaclhost - secure
+#   - url: http://localhost:5000/api/v1/
+#     description: for loaclhost - regular
+
+servers:
+  - url: '{protocol}://localhost:5000/api/{version}/'
+    description: for loaclhost
+    variables:
+      version:
+        enum:
+          - v1
+          - v2
+        default: v1
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    BasicAuth:
+      type: http
+      scheme: basic
+
+paths:
+  /greet:
+    get:
+      summary: Return greet message
+      tags:
+        - string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Welcome to lco swagger tuts'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /course/{courseId}:
+    get:
+      summary: Get the requested course
+      tags:
+        - course
+      parameters:
+        - name: courseId
+          description: id value of course
+          in: path
+          default: '11'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  price:
+                    type: integer
+        '400':
+          description: Bad request
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /courses:
+    get:
+      summary: Return all courses
+      tags:
+        - course
+      parameters:
+        - name: auth
+          in: header
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    price:
+                      type: integer
+        '400':
+          description: Bad request
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /course:
+    post:
+      summary: Add a new course
+      tags:
+        - course
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      requestBody:
+        description: Optional description in *Markdown* # TODO: to be changed
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                price:
+                  type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /searchcourse:
+    get:
+      summary: learning request query
+      tags:
+        - course
+      parameters:
+        - name: location
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - Delhi
+              - Mumbai
+              - Bangalore
+        - name: device
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - web
+              - android
+              - ios
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  location:
+                    type: string
+                  device:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /uploadfile:
+    post:
+      summary: Upload file to backend
+      tags:
+        - upload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                uploaded_file:
+                  type: string
+                  format: binary
+                username:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  originalname:
+                    type: string
+                  encoding:
+                    type: string
+                  mimetype:
+                    type: string
+                  size:
+                    type: integer
+                  destination:
+                    type: string
+                  filename:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
